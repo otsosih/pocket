@@ -5,7 +5,8 @@ The project's running record. Update it at the end of every work session.
 - Full research report: [`01-market-research-and-recommendation.md`](01-market-research-and-recommendation.md)
 
 ## Status (22 Oct 2026)
-- **Stage:** Research complete → **waiting for founder approval** of the recommended concept.
+- **Stage:** Week-2 prototype written (`last-stop-motel/`). **Waiting for the founder's first Studio playtest.**
+- **Founder profile:** 18+, lives in Germany, Windows laptop (Lenovo IdeaPad 5), Roblox Studio installed, time limited mainly by Claude usage limits.
 - **Recommended first game:** "Last Stop Motel" (working title), a co-op anomaly night-shift horror game with procedural anomalies, 3 roles and a persistent upgrade/journal meta.
 - **Target:** MVP in 6–8 weeks, public launch around 21 Dec 2026, go/iterate/pivot decision at day 90.
 
@@ -22,26 +23,35 @@ The project's running record. Update it at the end of every work session.
 | 22 Oct 2026 | Recommend co-op anomaly game as game #1 | Best demand × solo-feasibility × virality; reusable engine | Proposed |
 | 22 Oct 2026 | No paid random items at launch | Avoid odds/region compliance load | Proposed |
 | 22 Oct 2026 | Research docs live in `roblox-business/`, separate from the existing `app.py` | Keep the unrelated trading app untouched | Done |
+| 22 Oct 2026 | Workflow: Rojo project in git, Claude writes Luau in the cloud session, founder opens the built `.rbxlx` or syncs with Rojo | Works without Claude Code on the founder's PC; Studio MCP can be added later | Done |
+| 22 Oct 2026 | Prototype first, concept approval after the playtest | A prototype is cheap and answers "is it fun?" better than discussion | Done |
+
+## Technical decisions
+- Greybox map built from code (`MapBuilder`) so the prototype runs in an empty place. A hand-built map can replace it by reusing the `AnomalyProp` tags and `PropId`s.
+- Anomalies are data (`AnomalyDefinitions`) built from reusable effects (`AnomalyEffects`). This is the reusable engine for future settings.
+- Reporting uses server-side `ProximityPrompt.Triggered`, so no client remote is trusted.
+- DataStore: `UpdateAsync` only, session lock with 30-min expiry, 5 load retries, data that failed to load is never saved, autosave every 120 s, `BindToClose` flush.
+
+## Completed features
+- Prototype v0.1: greybox motel, 22 anomalies, night loop, strikes, Cash rewards, anomaly journal, saves, analytics events, HUD. Passes `luau-compile` and `luau-lsp` strict type checks. **Not yet run in Studio.**
 
 ## Business assumptions (to validate)
-- Founder can give 15–20 h/week.
-- Founder is eligible for ID verification, publishing and DevEx in their country.
+- Founder is eligible for ID verification, publishing and DevEx from Germany (18+). DevEx supports international creators with a W-8BEN form. The higher $0.0054 rate depends on *U.S. 18+ buyers*, and Roblox Wallet is U.S.-only. Neither changes our base model.
+- **Germany, taxes (not legal advice):** DevEx payouts are taxable income in Germany. Regular game income likely requires registering a business (Gewerbeanmeldung); the Kleinunternehmer scheme may apply. Check with a Steuerberater before the first payout.
 - Meaningful income threshold ≈ 3,000+ DAU, D1 ≥ 25%, D7 ≥ 8%, payer conversion ≥ 2%.
 
 ## Open questions for the founder
-1. Age bracket (under 13 / 13–17 / 18+) and country of residence (DevEx eligibility)?
-2. Roblox Studio installed? Windows or Mac?
-3. Realistic weekly hours?
-4. Approve "Last Stop Motel", or choose concept #2/#3?
+1. Playtest results (see `last-stop-motel/README.md` checklist).
+2. Final approval of "Last Stop Motel" after playing the prototype.
 
 ## Current metrics
 None yet (no game published).
 
 ## Known bugs
-None yet.
+None known; awaiting the first Studio run.
 
 ## Next actions
-- [ ] Founder: answer the open questions above
+- [ ] Founder: fix GitHub access for Claude (so work is pushed and you can `git pull`)
+- [ ] Founder: open `LastStopMotel.rbxlx`, play 2–3 nights, send Output errors + impressions
 - [ ] Founder: play Scary Shawarma Kiosk + Animal Hospital for ~1 h each and note what's boring
-- [ ] Claude: after approval, set up the Studio ↔ Claude Code workflow (Studio MCP or Rojo) and `CLAUDE.md`
-- [ ] Claude: week-2 greybox scripts, anomaly definition format, server-side director
+- [ ] Claude: fix playtest issues, then week 3–4: co-op roles (Desk / CCTV / Runner), procedural anomaly combos, more anomalies
