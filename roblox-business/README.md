@@ -5,7 +5,7 @@ The project's running record. Update it at the end of every work session.
 - Full research report: [`01-market-research-and-recommendation.md`](01-market-research-and-recommendation.md)
 
 ## Status (22 Oct 2026)
-- **Stage:** Week-2 prototype written (`last-stop-motel/`). **Waiting for the founder's first Studio playtest.**
+- **Stage:** **Concept definition.** The founder asked to pause development until the concept is clear. The prototype in `last-stop-motel/` is parked (kept, not extended).
 - **Founder profile:** 18+, lives in Germany, Windows laptop (Lenovo IdeaPad 5), Roblox Studio installed, time limited mainly by Claude usage limits.
 - **Recommended first game:** "Last Stop Motel" (working title), a co-op anomaly night-shift horror game with procedural anomalies, 3 roles and a persistent upgrade/journal meta.
 - **Target:** MVP in 6–8 weeks, public launch around 21 Dec 2026, go/iterate/pivot decision at day 90.
@@ -24,7 +24,7 @@ The project's running record. Update it at the end of every work session.
 | 22 Oct 2026 | No paid random items at launch | Avoid odds/region compliance load | Proposed |
 | 22 Oct 2026 | Research docs live in `roblox-business/`, separate from the existing `app.py` | Keep the unrelated trading app untouched | Done |
 | 22 Oct 2026 | Workflow: Rojo project in git, Claude writes Luau in the cloud session, founder opens the built `.rbxlx` or syncs with Rojo | Works without Claude Code on the founder's PC; Studio MCP can be added later | Done |
-| 22 Oct 2026 | Prototype first, concept approval after the playtest | A prototype is cheap and answers "is it fun?" better than discussion | Done |
+| 22 Oct 2026 | Prototype first, concept approval after the playtest | A prototype is cheap and answers "is it fun?" better than discussion | Reversed by founder: define the concept first |
 
 ## Technical decisions
 - Greybox map built from code (`MapBuilder`) so the prototype runs in an empty place. A hand-built map can replace it by reusing the `AnomalyProp` tags and `PropId`s.
