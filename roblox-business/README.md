@@ -17,6 +17,8 @@ The project's running record. Update it at the end of every work session.
 - Anomaly / observation horror has been a 2026 breakout genre (Shawarma Kiosk, Animal Hospital), but it may be past its peak.
 - DevEx: $0.0038 per Earned Robux (standard), $0.0054 for qualifying U.S. 18+ spend, 30,000 R$ minimum.
 
+- **Avatar items (UGC) as an alternative, checked 22 Oct 2026:** the creator gets only **30%** of each sale, or ~33% when priced above the floor on the Marketplace (official). An in-experience sale gives the experience owner another 40%, so items sold inside **our own game** earn 70%. Upfront costs: 80 R$ upload fee per item (official) plus a publishing advance of ~1,000–2,500 R$ for 3D items (reported). Requires ID verification, and reportedly Plus/Premium to keep items on sale. Reported: ~120k active sellers; median creator earns < 5,000 R$/month; median item ≈ $20 lifetime. Verdict: weaker than games as a main business; good as an add-on inside our own game.
+
 ## Decisions
 | Date | Decision | Why | Status |
 |---|---|---|---|
