@@ -15,3 +15,12 @@ python3 make_video.py --out out.mp4 --banner ClipHub_games.mov --voice ru-irinia
 ```
 История задаётся списком `(текст, функция-сцена, движение камеры)` — см. `DEMO_STORY`.
 Ролики для ClipHub должны быть не короче 24 сек.
+
+## Мужские голоса (Piper, зеркало на GitHub)
+```
+https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-ru_RU-denis-medium.tar.bz2
+https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-ru_RU-ruslan-medium.tar.bz2
+https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-ru_RU-dmitri-medium.tar.bz2
+```
+Основной голос сериала — denis (≈147 Гц, ближе всего к референсу). ruslan ниже (≈120 Гц).
+`story_metro.py --pitch 0.917` дополнительно понижает голос, по умолчанию без сдвига.

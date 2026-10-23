@@ -140,6 +140,7 @@ def main():
     ap = argparse.ArgumentParser()
     for k in ("out", "banner", "voice", "font"):
         ap.add_argument(f"--{k}", required=True)
+    ap.add_argument("--pitch", type=float, default=1.0, help="<1 lowers the voice, e.g. 0.917 = -1.5 semitones")
     a = ap.parse_args()
     f.FONT_PATH = a.font
     tmp = tempfile.mkdtemp(prefix="metro_")
@@ -176,13 +177,13 @@ def main():
          "".join(f"[{i}]apad=whole_dur={segs[i][1]:.3f}[a{i}];" for i in range(len(wavs)))
          + "".join(f"[a{i}]" for i in range(len(wavs))) + f"concat=n={len(wavs)}:v=0:a=1", voice])
 
-    # Deeper voice (pitch down ~1.5 semitones, tempo kept) + quiet dark ambient bed, like the reference.
+    # Optional pitch shift (tempo kept) + quiet dark ambient bed, like the reference.
     mixed = os.path.join(tmp, "mix.wav")
     run(["ffmpeg", "-y", "-i", voice,
          "-f", "lavfi", "-i", f"anoisesrc=color=brown:amplitude=0.5:d={total:.3f}",
          "-f", "lavfi", "-i", f"sine=frequency=55:d={total:.3f}",
          "-filter_complex",
-         "[0]aresample=44100,asetrate=44100*0.917,aresample=44100,atempo=1.0905,"
+         f"[0]aresample=44100,asetrate=44100*{a.pitch},aresample=44100,atempo={1 / a.pitch:.4f},"
          "equalizer=f=180:t=q:w=1:g=3,acompressor=threshold=0.1:ratio=3,volume=1.4[v];"
          "[1]lowpass=f=400,volume=0.10[n];[2]volume=0.05,tremolo=f=0.15:d=0.6[d];"
          "[n][d]amix=inputs=2:normalize=0,afade=t=in:d=2[bed];"
