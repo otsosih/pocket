@@ -292,3 +292,139 @@ def bell(s, x, y, ring=False):
     s.rect([x - 32, y + 22, x + 32, y + 32], (210, 170, 50), r=4)
     if ring:
         sound_marks(s, x + 50, y + 15, (255, 230, 120))
+
+
+# ---------- dark horror additions (sunken-archives-like look) ----------
+from PIL import ImageFont
+
+FONT_PATH = None   # set by the builder to Montserrat-Black.ttf
+
+
+def _font(size):
+    return ImageFont.truetype(FONT_PATH, size * S) if FONT_PATH else ImageFont.load_default()
+
+
+def text(s, x, y, txt, size=48, col=(255, 255, 255), angle=0, alpha=255, anchor="mm"):
+    layer = Image.new("RGBA", (N, N), (0, 0, 0, 0))
+    ImageDraw.Draw(layer).text((x * S, y * S), txt, font=_font(size), fill=(*s.c(col), alpha), anchor=anchor)
+    if angle:
+        layer = layer.rotate(angle, center=(x * S, y * S), resample=Image.BICUBIC)
+    s.img.alpha_composite(layer)
+
+
+def graffiti(s, txt, x, y, angle=8, col=(200, 60, 110), size=70):
+    text(s, x, y, txt, size, col, angle, alpha=150)
+
+
+def hud(s, x, y, small, big):
+    """Corner info tag like «ЭТАЖ 9»."""
+    s.rect([x, y, x + 8, y + 110], (230, 50, 50))
+    text(s, x + 26, y + 22, small, 22, (170, 170, 180), anchor="lm")
+    text(s, x + 26, y + 72, big, 56, (240, 240, 240), anchor="lm")
+
+
+def flashlight(s, x, y, r=260, darkness=215):
+    m = Image.new("L", (N, N), darkness)
+    ImageDraw.Draw(m).ellipse([(x - r) * S, (y - r) * S, (x + r) * S, (y + r) * S], fill=0)
+    m = m.filter(ImageFilter.GaussianBlur(r * S // 3))
+    dark = Image.new("RGBA", (N, N), (0, 0, 8, 255)); dark.putalpha(m)
+    s.img.alpha_composite(dark)
+
+
+def city_night(s):
+    s.rect([0, 0, OUT, OUT], (22, 26, 44))
+    rnd = random.Random(11)
+    for _ in range(70):
+        x, y = rnd.randrange(OUT), rnd.randrange(500)
+        s.rect([x, y, x + 3, y + 3], (200, 200, 220))
+    s.ell([780, 90, 880, 190], (225, 225, 215))
+    for i, (x, w, h) in enumerate([(0, 230, 520), (210, 200, 640), (400, 260, 470), (650, 190, 600), (830, 250, 540)]):
+        s.rect([x, OUT - 180 - h, x + w, OUT - 180], (48, 52, 70) if i % 2 else (58, 62, 80))
+        for wx in range(x + 20, x + w - 30, 46):
+            for wy in range(OUT - 160 - h, OUT - 200, 60):
+                lit = rnd.random() < 0.12
+                s.rect([wx, wy, wx + 24, wy + 32], (240, 210, 120) if lit else (30, 34, 50))
+    s.rect([0, OUT - 180, OUT, OUT], (40, 40, 48))
+
+
+def metro_entrance(s, sign="ВХОД ЗАКРЫТ"):
+    city_night(s)
+    s.rect([300, 640, 780, 900], (25, 25, 32))
+    for i in range(6):
+        s.rect([300, 640 + i * 44, 780, 652 + i * 44], (70, 70, 80))
+    s.rect([270, 560, 810, 640], (120, 120, 130), r=6)
+    s.rect([290, 575, 790, 625], (150, 30, 40), r=4)
+    text(s, 540, 600, sign, 34, (255, 230, 230))
+    s.glow(540, 760, 160, (120, 160, 255), 60)
+
+
+def platform(s, light=True):
+    s.rect([0, 0, OUT, OUT], (60, 66, 80))
+    for x in range(0, OUT, 54):
+        for y in range(0, 620, 54):
+            s.rect([x + 2, y + 2, x + 52, y + 52], (78, 86, 100) if (x + y) // 54 % 2 else (70, 78, 92))
+    for x in (110, 520, 930):
+        s.rect([x - 40, 0, x + 40, 780], (95, 100, 115))
+        s.rect([x - 50, 0, x + 50, 40], (110, 115, 130))
+    s.rect([0, 620, OUT, 780], (120, 110, 100))
+    s.rect([0, 770, OUT, 790], (220, 190, 60))
+    s.rect([0, 790, OUT, OUT], (20, 20, 24))
+    for x in (200, 420):
+        pass
+    s.line([(0, 900), (OUT, 900)], (110, 110, 120), 10)
+    s.line([(0, 1000), (OUT, 1000)], (110, 110, 120), 10)
+    if light:
+        for x in (310, 730):
+            s.rect([x - 70, 60, x + 70, 80], (250, 250, 230), r=8)
+            s.glow(x, 120, 140, (255, 250, 220), 50)
+
+
+def tunnel(s, depth=7):
+    s.rect([0, 0, OUT, OUT], (14, 14, 20))
+    for i in range(depth):
+        k = i / depth
+        m = int(60 + k * 420)
+        col = tuple(int(70 - 55 * k) for _ in range(3))
+        s.rect([m, m - 40, OUT - m, OUT - m + 40], None, outline=col, w=max(4, 22 - i * 3))
+    s.poly([(470, OUT), (520, 560), (560, 560), (610, OUT)], (40, 40, 46))
+    s.line([(380, OUT), (525, 560)], (120, 120, 130), 8)
+    s.line([(700, OUT), (555, 560)], (120, 120, 130), 8)
+
+
+def wagon(s, lit=False):
+    s.rect([0, 0, OUT, OUT], (35, 40, 50))
+    s.rect([0, 120, OUT, 160], (90, 90, 100))
+    for x in (60, 400, 740):
+        s.rect([x, 200, x + 280, 470], (20, 25, 35) if not lit else (60, 70, 90), r=14)
+        s.rect([x + 10, 210, x + 270, 460], None, outline=(120, 120, 130), w=6)
+    s.rect([0, 560, OUT, 680], (130, 70, 60), r=10)
+    s.rect([0, 680, OUT, 720], (90, 50, 45))
+    s.rect([0, 720, OUT, OUT], (50, 50, 55))
+    for x in range(80, OUT, 240):
+        s.line([(x, 160), (x, 560)], (170, 170, 180), 8)
+
+
+def phone_msg(s, sender="НЕИЗВЕСТНЫЙ НОМЕР", lines=(), note="1 новое сообщение"):
+    s.rect([0, 0, OUT, OUT], (10, 12, 18))
+    s.glow(540, 540, 360, (60, 80, 160), 60)
+    s.rect([260, 60, 820, 1040], (24, 26, 34), r=60)
+    s.rect([285, 90, 795, 1010], (34, 38, 52), r=44)
+    text(s, 540, 170, sender, 26, (170, 175, 190))
+    text(s, 540, 205, "+7 ··· ··· ·· ··", 24, (120, 125, 140))
+    if lines:
+        h = 70 + 54 * len(lines)
+        s.rect([320, 300, 760, 300 + h], (55, 60, 80), r=26)
+        for i, ln in enumerate(lines):
+            text(s, 350, 350 + i * 54, ln, 34, (235, 235, 240), anchor="lm")
+    else:
+        s.rect([340, 300, 740, 360], (55, 60, 80), r=20)
+        text(s, 540, 330, note, 26, (220, 220, 230))
+
+
+def hood_person(s, x, y, body=(230, 180, 40), skin=(245, 205, 175), hair=(60, 40, 30), mood="calm", scale=1.0, look=0):
+    """Person with a hood up — main-character look."""
+    u = 10 * scale
+    person(s, x, y, body=body, skin=skin, hair=hair, mood=mood, scale=scale, look=look)
+    hx, hy = x + look * u, y - 37 * u
+    s.d.arc([(hx - 13 * u) * S, (hy - 14 * u) * S, (hx + 13 * u) * S, (hy + 14 * u) * S], 160, 380,
+            fill=s.c(_k(body, 0.8)), width=int(3.5 * u * S))
