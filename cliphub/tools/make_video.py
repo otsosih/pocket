@@ -65,8 +65,9 @@ def run(cmd):
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
 
-def tts(text, voice, path):
-    subprocess.run(["piper", "-m", voice, "-f", path, "--sentence_silence", "0.25"],
+def tts(text, voice, path, length_scale=1.0, silence=0.25):
+    subprocess.run(["piper", "-m", voice, "-f", path, "--sentence_silence", str(silence),
+                    "--length_scale", str(length_scale)],
                    input=text.encode(), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with wave.open(path) as w:
         return w.getnframes() / w.getframerate()
@@ -149,7 +150,7 @@ def build(story, out, banner, voice, font):
     )
     run(["ffmpeg", "-y", "-i", scene_track, "-stream_loop", "-1", "-i", banner, "-i", audio,
          "-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-t", f"{total:.3f}",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "160k",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "192k", "-ar", "44100", "-ac", "2",
          "-movflags", "+faststart", out])
     return total
 

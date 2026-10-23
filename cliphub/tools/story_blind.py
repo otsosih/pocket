@@ -124,7 +124,7 @@ def main():
           f"[v2]ass={ass}:fontsdir={fonts_dir},format=yuv420p[v]")
     run(["ffmpeg", "-y", "-i", scenes, "-stream_loop", "-1", "-i", a.banner, "-i", voice,
          "-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-t", f"{total:.3f}",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-c:a", "aac", "-b:a", "160k",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "21", "-c:a", "aac", "-b:a", "192k", "-ar", "44100", "-ac", "2",
          "-movflags", "+faststart", full])
     print(f"full {total:.1f}s", flush=True)
 
@@ -136,7 +136,7 @@ def main():
         out = os.path.join(a.outdir, f"part_{n:02d}.mp4")
         run(["ffmpeg", "-y", "-ss", f"{t0:.3f}", "-i", full, "-t", f"{t1 - t0:.3f}",
              "-vf", f"ass={ov}:fontsdir={fonts_dir},format=yuv420p",
-             "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "160k",
+             "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "192k", "-ar", "44100", "-ac", "2",
              "-movflags", "+faststart", out])
         print(f"part {n}: {t1 - t0:.1f}s", flush=True)
 

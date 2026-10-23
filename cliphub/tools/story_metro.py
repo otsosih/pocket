@@ -148,7 +148,7 @@ def main():
     clips, wavs, segs, t = [], [], [], 0.0
     for i, (text, layers, move) in enumerate(STORY):
         wav = os.path.join(tmp, f"s{i:02d}.wav")
-        dur = tts(clean(text), a.voice, wav) + 0.25
+        dur = tts(clean(text), a.voice, wav, length_scale=1.12, silence=0.12) + 0.15
         png = os.path.join(tmp, f"s{i:02d}.png")
         if layers == "END":
             end_card(png); dur += 1.0
@@ -176,6 +176,19 @@ def main():
          "".join(f"[{i}]apad=whole_dur={segs[i][1]:.3f}[a{i}];" for i in range(len(wavs)))
          + "".join(f"[a{i}]" for i in range(len(wavs))) + f"concat=n={len(wavs)}:v=0:a=1", voice])
 
+    # Deeper voice (pitch down ~1.5 semitones, tempo kept) + quiet dark ambient bed, like the reference.
+    mixed = os.path.join(tmp, "mix.wav")
+    run(["ffmpeg", "-y", "-i", voice,
+         "-f", "lavfi", "-i", f"anoisesrc=color=brown:amplitude=0.5:d={total:.3f}",
+         "-f", "lavfi", "-i", f"sine=frequency=55:d={total:.3f}",
+         "-filter_complex",
+         "[0]aresample=44100,asetrate=44100*0.917,aresample=44100,atempo=1.0905,"
+         "equalizer=f=180:t=q:w=1:g=3,acompressor=threshold=0.1:ratio=3,volume=1.4[v];"
+         "[1]lowpass=f=400,volume=0.10[n];[2]volume=0.05,tremolo=f=0.15:d=0.6[d];"
+         "[n][d]amix=inputs=2:normalize=0,afade=t=in:d=2[bed];"
+         "[v][bed]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5[out]",
+         "-map", "[out]", "-ar", "44100", "-ac", "2", mixed])
+    voice = mixed
     subs = os.path.join(tmp, "subs.ass"); write_subs(segs, subs)
     mask = os.path.join(tmp, "mask.png"); frame_mask(mask)
     fc = (f"color=c=black:s={W}x{H}:r={FPS}[bg];"
@@ -186,7 +199,7 @@ def main():
           f"[v2]ass={subs}:fontsdir={fonts_dir},format=yuv420p[v]")
     run(["ffmpeg", "-y", "-i", scenes, "-stream_loop", "-1", "-i", a.banner, "-i", voice, "-loop", "1", "-i", mask,
          "-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-t", f"{total:.3f}",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "160k",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-c:a", "aac", "-b:a", "192k", "-ar", "44100", "-ac", "2",
          "-movflags", "+faststart", a.out])
     print(f"done {total:.1f}s", flush=True)
 
