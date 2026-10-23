@@ -63,7 +63,7 @@ STORY = [
     ("Она стояла ровно в центре.", sc(True, f.kitchen, lambda s: f.table(s, 540, 900, cup=0), f.Scene.vignette), "in"),
     ("Как вы думаете, кто её переставил? Пишите в комментариях. И подпишитесь, чтобы не пропустить новую историю.", sc(True, f.room, lambda s: V(s, 420, 900, "scared"), lambda s: f.shadow(s, 860, 880, 0.9, 200), f.Scene.vignette), "out"),
 ]
-PART_STARTS = [0, 4, 8, 11, 14, 17, 20, 23, 26, 29]   # segment index where each Short begins
+PART_STARTS = [0, 4, 7, 10, 13, 16, 19, 22, 25, 28]   # segment index where each Short begins (each part >= 24 s)   # segment index where each Short begins
 TITLE = "Я слепая и живу одна"
 
 
